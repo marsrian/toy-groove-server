@@ -24,14 +24,9 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
+    // await client.connect();
 
     const toysCollection = client.db("allToys").collection("toy");
-
-    // Creating index on two fields
-    const indexKeys = { toyName: 1 };
-    const indexOptions = { name: "toyName" };
-    const result = await toysCollection.createIndex(indexKeys, indexOptions);
 
     // ...................Toys.....................//
     // Create Toys Post:
@@ -42,7 +37,7 @@ async function run() {
       });
 
     // Read All Toys:
-    app.get("/toys", async (req, res) => {
+    app.get("/allToys", async (req, res) => {
         const result = await toysCollection.find().limit(20).toArray();
         res.send(result);
       });
@@ -70,14 +65,14 @@ async function run() {
       const filter = { _id: new ObjectId(id) };
       const options = { upsert: true };
       const updateToy = req.body;
-      const event = {
+      const toy = {
         $set: {
           price: updateToy.price,
           quantity: updateToy.quantity,
           description: updateToy.description,
         },
       };
-      const result = await toysCollection.updateOne(filter, event, options);
+      const result = await toysCollection.updateOne(filter, toy, options);
       res.send(result);
     });
 
@@ -105,7 +100,7 @@ async function run() {
       const text = req.params.text;
       const result = await toysCollection.find({
           $and: [
-            { toyName: { $regex: text, $options: "i" } }
+            { toyName: text }
           ],
         }).toArray();
       res.send(result);
@@ -113,7 +108,7 @@ async function run() {
 
 
     // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
+    // await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
     // Ensures that the client will close when you finish/error
