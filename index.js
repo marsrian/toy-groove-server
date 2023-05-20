@@ -28,6 +28,11 @@ async function run() {
 
     const toysCollection = client.db("allToys").collection("toy");
 
+    // Creating index on two fields
+    const indexKeys = { toyName: 1 };
+    const indexOptions = { name: "toyName" };
+    const result = await toysCollection.createIndex(indexKeys, indexOptions);
+
     // ...................Toys.....................//
     // Create Toys Post:
     app.post("/toys", async (req, res) => {
@@ -47,6 +52,62 @@ async function run() {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await toysCollection.findOne(query);
+      res.send(result);
+    });
+
+    // Read by Category:
+    app.get("/allToysByCategory/:category", async (req, res) => {
+      const jobs = await toysCollection.find({
+          subCategory: req.params.category,
+        })
+        .toArray();
+      res.send(jobs);
+    });
+
+    // Update Toy:
+    app.put("/toys/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const options = { upsert: true };
+      const updateToy = req.body;
+      const event = {
+        $set: {
+          price: updateToy.price,
+          quantity: updateToy.quantity,
+          description: updateToy.description,
+        },
+      };
+      const result = await toysCollection.updateOne(filter, event, options);
+      res.send(result);
+    });
+
+    // Delete Event:
+    app.delete("/toys/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await toysCollection.deleteOne(query);
+      res.send(result);
+    });
+
+    // Read by Email:
+    app.get("/myToys/:email", async (req, res) =>{
+      // const type = req.params.type === "Ascending";
+      // const value = req.query.value;
+      // const sortObj = {};
+      // sortObj[value] = type ? 1 : -1;
+      const result = await toysCollection.find({ sellerEmail: req.params.email }).sort({price: 1}).toArray();
+      res.send(result);
+    });
+    
+
+    // ........Search..............//
+    app.get("/getToysName/:text", async (req, res) => {
+      const text = req.params.text;
+      const result = await toysCollection.find({
+          $and: [
+            { toyName: { $regex: text, $options: "i" } }
+          ],
+        }).toArray();
       res.send(result);
     });
 
