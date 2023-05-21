@@ -85,14 +85,28 @@ async function run() {
     });
 
     // Read by Email:
-    app.get("/myToys/:email", async (req, res) =>{
+    // app.get("/myToys/:email", async (req, res) =>{
       // const type = req.params.type === "Ascending";
       // const value = req.query.value;
       // const sortObj = {};
       // sortObj[value] = type ? 1 : -1;
-      const result = await toysCollection.find({ sellerEmail: req.params.email }).sort({price: 1}).toArray();
+    //   const result = await toysCollection.find({ sellerEmail: req.params.email }).sort({price: 1}).toArray();
+    //   res.send(result);
+    // });
+
+    // sort by ascending descending condition:
+    app.get('/myToy', async (req, res) =>{
+      const type = req.query.type == "ascending";
+      const value = req.query.value;
+      let query = {};
+      if(req.query.email) {
+        query = { sellerEmail: req.query.email };
+      }
+      let sortObj = {};
+      sortObj[value] = type ? 1 : -1;
+      const result = await toysCollection.find(query).sort(sortObj).toArray();
       res.send(result);
-    });
+    })
     
 
     // ........Search..............//
