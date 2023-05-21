@@ -100,7 +100,7 @@ async function run() {
     })
     
 
-    // ..............Search..............//
+    // ..............Search................//
     app.get("/getToysName/:text", async (req, res) => {
       const text = req.params.text;
       const result = await toysCollection.find({
