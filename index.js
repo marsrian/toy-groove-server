@@ -28,7 +28,7 @@ async function run() {
 
     const toysCollection = client.db("allToys").collection("toy");
 
-    // ...................Toys.....................//
+    // ...................Toys....................//
     // Create Toys Post:
     app.post("/toys", async (req, res) => {
         const newToy = req.body;
@@ -100,7 +100,7 @@ async function run() {
     })
     
 
-    // ........Search..............//
+    // ..............Search..............//
     app.get("/getToysName/:text", async (req, res) => {
       const text = req.params.text;
       const result = await toysCollection.find({
