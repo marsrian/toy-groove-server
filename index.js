@@ -84,7 +84,7 @@ async function run() {
       res.send(result);
     });
 
-    // Read by Email:
+
     // app.get("/myToys/:email", async (req, res) =>{
       // const type = req.params.type === "Ascending";
       // const value = req.query.value;
