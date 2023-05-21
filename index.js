@@ -34,7 +34,7 @@ async function run() {
         const newToy = req.body;
         const result = await toysCollection.insertOne(newToy);
         res.send(result);
-      });
+    });
 
     // Read All Toys:
     app.get("/allToys", async (req, res) => {
@@ -52,11 +52,11 @@ async function run() {
 
     // Read by Category:
     app.get("/allToysByCategory/:category", async (req, res) => {
-      const jobs = await toysCollection.find({
+      const toys = await toysCollection.find({
           subCategory: req.params.category,
         })
         .toArray();
-      res.send(jobs);
+      res.send(toys);
     });
 
     // Update Toy:
